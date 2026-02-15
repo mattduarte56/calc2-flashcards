@@ -322,6 +322,224 @@ const CARDS = [
       { q: "∫ √(x^2 - 16) dx", a: "(x/2)√(x^2-16) - 8 ln|x+√(x^2-16)| + C" },
     ],
   },
+// ===================== BASIC SPEED INTEGRALS =====================
+
+{
+  cat: "Speed Basics",
+  front: "∫ x dx",
+  back: "x^2/2 + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ x^2 dx",
+  back: "x^3/3 + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ x^3 dx",
+  back: "x^4/4 + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ x^n dx (n ≠ -1)",
+  back: "x^(n+1)/(n+1) + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ 1 dx",
+  back: "x + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ c dx (constant)",
+  back: "c x + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ 1/x dx",
+  back: "ln|x| + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ 1/x^2 dx",
+  back: "-1/x + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ 1/x^3 dx",
+  back: "-1/(2x^2) + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ √x dx",
+  back: "(2/3)x^(3/2) + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ 1/√x dx",
+  back: "2√x + C",
+},
+
+// ===================== EXP SPEED =====================
+
+{
+  cat: "Speed Basics",
+  front: "∫ e^x dx",
+  back: "e^x + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ e^(3x) dx",
+  back: "(1/3)e^(3x) + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ e^(-2x) dx",
+  back: "-(1/2)e^(-2x) + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ 2^x dx",
+  back: "2^x / ln(2) + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ 10^x dx",
+  back: "10^x / ln(10) + C",
+},
+
+// ===================== BASIC TRIG SPEED =====================
+
+{
+  cat: "Speed Basics",
+  front: "∫ sin x dx",
+  back: "-cos x + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ cos x dx",
+  back: "sin x + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ tan x dx",
+  back: "-ln|cos x| + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ cot x dx",
+  back: "ln|sin x| + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ sec^2 x dx",
+  back: "tan x + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ csc^2 x dx",
+  back: "-cot x + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ sec x tan x dx",
+  back: "sec x + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ csc x cot x dx",
+  back: "-csc x + C",
+},
+
+// ===================== COMMON INVERSE FORMS =====================
+
+{
+  cat: "Speed Basics",
+  front: "∫ 1/(1+x^2) dx",
+  back: "arctan x + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ 1/√(1-x^2) dx",
+  back: "arcsin x + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ 1/(x^2 + 4) dx",
+  back: "(1/2) arctan(x/2) + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ 1/√(9 - x^2) dx",
+  back: "arcsin(x/3) + C",
+},
+
+// ===================== QUICK U-SUB PATTERNS =====================
+
+{
+  cat: "Speed Basics",
+  front: "∫ 2x dx",
+  back: "x^2 + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ 6x^2 dx",
+  back: "2x^3 + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ 3x^2 e^(x^3) dx",
+  back: "e^(x^3) + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ (1)/(x ln x) dx",
+  back: "ln|ln x| + C",
+},
+
+// ===================== LOG SPEED =====================
+
+{
+  cat: "Speed Basics",
+  front: "∫ ln x dx",
+  back: "x ln x - x + C",
+},
+{
+  cat: "Speed Basics",
+  front: "∫ (1)/(x ln x) dx",
+  back: "ln|ln x| + C",
+},
+
+// ===================== ARC LENGTH CORE FORM =====================
+
+{
+  cat: "Speed Basics",
+  front: "Arc length formula (y=f(x))",
+  back: "L = ∫_a^b √(1 + (f'(x))^2) dx",
+},
+
+// ===================== AREA & VOLUME QUICK =====================
+
+{
+  cat: "Speed Basics",
+  front: "Area between curves (x)",
+  back: "A = ∫ (top − bottom) dx",
+},
+{
+  cat: "Speed Basics",
+  front: "Disk method",
+  back: "V = π ∫ R^2 dx",
+},
+{
+  cat: "Speed Basics",
+  front: "Washer method",
+  back: "V = π ∫ (R^2 − r^2) dx",
+},
+{
+  cat: "Speed Basics",
+  front: "Shell method",
+  back: "V = 2π ∫ (radius)(height) dx",
+},
 
   // ===================== TECHNIQUES: SUBSTITUTION =====================
   {
@@ -512,23 +730,37 @@ const CARDS = [
     ],
   },
 
-  // ===================== (Optional) HYPERBOLIC =====================
-  {
-    cat: "Hyperbolic",
-    front: "∫ sinh(kx) dx",
-    back: "(1/k) cosh(kx) + C",
-    examples: [
-      { q: "∫ sinh(2x) dx", a: "(1/2)cosh(2x) + C" },
-    ],
-  },
-  {
-    cat: "Hyperbolic",
-    front: "∫ cosh(kx) dx",
-    back: "(1/k) sinh(kx) + C",
-    examples: [
-      { q: "∫ 5cosh(3x) dx", a: "(5/3)sinh(3x) + C" },
-    ],
-  },
+
+// ===================== WEAKNESS AUDIT PROBLEMS =====================
+
+{
+  cat: "Audit Problems",
+  front: "1) ∫ x^2 √(x^2 + 9) dx",
+  back: "Use trig substitution: x = 3 tanθ → dx = 3 sec^2θ dθ.\nIntegral becomes 81 ∫ tan^2θ sec^3θ dθ.\nUse tan^2 = sec^2 − 1.\nFinal answer:\n(1/8)(x√(x^2+9)(2x^2+9) − 81 ln|x + √(x^2+9)|) + C",
+  hint: "√(x² + a²) → x = a tanθ"
+},
+
+{
+  cat: "Audit Problems",
+  front: "2) ∫ 1/(x^2 + 6x + 13) dx",
+  back: "Complete the square:\nx^2 + 6x + 13 = (x+3)^2 + 4.\nThis matches 1/(u^2 + a^2).\nAnswer:\n(1/2) arctan((x+3)/2) + C",
+  hint: "Complete the square first."
+},
+
+{
+  cat: "Audit Problems",
+  front: "3) ∫₁^∞ 1/x^(3/2) dx",
+  back: "Rewrite as limit:\nlim_{b→∞} ∫₁^b x^(−3/2) dx.\nAntiderivative:\n−2/x^(1/2).\nEvaluate:\nlim_{b→∞} [−2/√b + 2].\nAs b→∞, first term → 0.\nAnswer: 2.\nConverges because p = 3/2 > 1.",
+  hint: "p-test: ∫₁^∞ 1/x^p converges if p > 1."
+},
+
+{
+  cat: "Audit Problems",
+  front: "4) Volume: Region between y = x^2 and y = 4 rotated about y-axis",
+  back: "Find intersection: x^2 = 4 → x = ±2.\nUsing shells (w.r.t x):\nRadius = x\nHeight = 4 − x^2\nV = 2π ∫₀^2 x(4 − x^2) dx\n= 2π ∫₀^2 (4x − x^3) dx\n= 2π [2x^2 − x^4/4]_0^2\n= 2π [8 − 4]\n= 8π.",
+  hint: "Rotating about y-axis → shells is easiest."
+},
+
 ];
 
 const categories = ["All", ...Array.from(new Set(CARDS.map(c => c.cat)))];
