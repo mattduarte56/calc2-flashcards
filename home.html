@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calc 2 Flashcards — Integrals + Formulas</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; max-width: 980px; }
+    h1 { margin: 0 0 6px; }
+    .muted { color: #555; margin: 0 0 16px; line-height: 1.35; }
+    .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0 18px; }
+    input, select, button { padding: 8px 10px; font-size: 14px; }
+    button { cursor: pointer; }
+    .card {
+      border: 1px solid #ddd; border-radius: 10px; padding: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin: 10px 0;
+    }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .tag { font-size: 12px; padding: 3px 8px; border: 1px solid #ddd; border-radius: 999px; color: #333; }
+    .front { font-size: 18px; margin: 10px 0; }
+    .back { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ddd; }
+    .hint { color: #666; font-size: 13px; margin-top: 8px; }
+    .example { margin-top: 8px; padding: 10px; background: #fafafa; border-radius: 8px; border: 1px solid #eee; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .footer { margin-top: 18px; color: #666; font-size: 13px; line-height: 1.35; }
+    code { background: #f3f3f3; padding: 2px 6px; border-radius: 6px; }
+    .mini { font-size: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Calc 2 Flashcards</h1>
+  <p class="muted">
+    Click a card to flip. Filter + search. Includes integrals, derivatives of inverse trig, and “formula cards”:
+    area between curves, volume, arc length, average value, improper integrals, Simpson’s rule + error.
+  </p>
+
+  <div class="bar">
+    <select id="category"></select>
+    <input id="search" placeholder="Search: IBP, area between curves, arcsin', partial fractions, Simpson, arc length..." size="55" />
+    <button id="shuffleBtn">Shuffle</button>
+    <button id="showAllBtn">Show all answers</button>
+    <button id="hideAllBtn">Hide all answers</button>
+  </div>
+
+  <div class="row" style="margin-bottom:10px;">
+    <span class="tag" id="countTag"></span>
+    <span class="tag">Always add <code>+ C</code> for indefinite integrals</span>
+    <span class="tag">Many formulas assume <code>a &gt; 0</code></span>
+  </div>
+
+  <div id="cards" class="grid"></div>
+
+  <div class="footer">
+    <div><strong>Quick reminders:</strong></div>
+    <ul>
+      <li>Logs: use <code>ln|x|</code> when needed.</li>
+      <li>Area: if unsure which is “top”, find intersections and test a point.</li>
+      <li>Arc length: don’t simplify too early; get it into the correct form first.</li>
+      <li>Improper integrals: rewrite as limits, then test convergence.</li>
+    </ul>
+    <div class="mini">Single-file. No libraries. Works offline.</div>
+  </div>
+
+<script>
+/**
+ * Flashcard format:
+ * { cat, front, back, hint?, examples?: [{q,a}] }
+ *
+ * Categories include:
+ * - Power & Algebra, Exponentials & Logs, Trig, Inverse Trig Forms, Trig-Sub Forms, Hyperbolic
+ * - Derivatives (needed), Techniques, Improper Integrals, Numerical Integration, Applications, Trig Identities
+ */
+
+const CARDS = [
+  // ===================== PRECALC / TRIG IDENTITIES (as needed) =====================
+  {
+    cat: "Trig Identities",
+    front: "Pythagorean identities",
+    back: "sin^2 x + cos^2 x = 1;  1 + tan^2 x = sec^2 x;  1 + cot^2 x = csc^2 x",
+    examples: [
+      { q: "Rewrite 1 - sin^2 x", a: "cos^2 x" },
+      { q: "Rewrite sec^2 x - 1", a: "tan^2 x" },
+    ],
+    hint: "Used in trig integrals + trig substitution."
+  },
+  {
+    cat: "Trig Identities",
+    front: "Even/odd & basic trig facts",
+    back: "sin(-x)=-sin x; cos(-x)=cos x; tan(-x)=-tan x;  tan x = sin x / cos x",
+    examples: [
+      { q: "cos(−θ)", a: "cos θ" },
+      { q: "sin(−θ)", a: "−sin θ" },
+    ],
+  },
+  {
+    cat: "Trig Identities",
+    front: "Common angles (radians)",
+    back: "0, π/6, π/4, π/3, π/2 (know sin/cos values)",
+    examples: [
+      { q: "sin(π/6)", a: "1/2" },
+      { q: "cos(π/4)", a: "√2/2" },
+      { q: "tan(π/3)", a: "√3" },
+    ],
+    hint: "Usually memorized."
+  },
+
+  // ===================== DERIVATIVES (explicitly requested) =====================
+  {
+    cat: "Derivatives",
+    front: "d/dx [arcsin x]",
+    back: "1 / √(1 - x^2)",
+    examples: [
+      { q: "d/dx [arcsin(3x)]", a: "3 / √(1-(3x)^2) = 3/√(1-9x^2)" },
+    ],
+    hint: "Chain rule."
+  },
+  {
+    cat: "Derivatives",
+    front: "d/dx [arctan x]",
+    back: "1 / (1 + x^2)",
+    examples: [
+      { q: "d/dx [arctan(5x)]", a: "5 / (1 + (5x)^2) = 5/(1+25x^2)" },
+    ],
+  },
+
+  // ===================== POWER / ALGEBRA =====================
+  {
+    cat: "Power & Algebra",
+    front: "∫ x^n dx (n ≠ -1)",
+    back: "x^(n+1)/(n+1) + C",
+    examples: [
+      { q: "∫ x^5 dx", a: "x^6/6 + C" },
+      { q: "∫ x^(1/2) dx", a: "(2/3)x^(3/2) + C" },
+      { q: "∫ x^(-3) dx", a: "-1/(2x^2) + C" },
+    ],
+    hint: "Add 1 to the power, divide."
+  },
+  {
+    cat: "Power & Algebra",
+    front: "∫ (1/x) dx",
+    back: "ln|x| + C",
+    examples: [
+      { q: "∫ (1/(5x)) dx", a: "(1/5)ln|x| + C" },
+      { q: "∫ (7/x) dx", a: "7 ln|x| + C" },
+    ],
+  },
+  {
+    cat: "Power & Algebra",
+    front: "∫ (ax + b)^n dx (n ≠ -1)",
+    back: "(ax+b)^(n+1) / (a(n+1)) + C",
+    examples: [
+      { q: "∫ (3x+2)^5 dx", a: "(3x+2)^6/18 + C" },
+      { q: "∫ (2-5x)^(1/2) dx", a: "-(2/15)(2-5x)^(3/2) + C" },
+    ],
+    hint: "u = ax+b"
+  },
+
+  // ===================== EXPONENTIALS & LOGS =====================
+  {
+    cat: "Exponentials & Logs",
+    front: "∫ e^(kx) dx",
+    back: "(1/k) e^(kx) + C",
+    examples: [
+      { q: "∫ e^(3x) dx", a: "(1/3)e^(3x) + C" },
+      { q: "∫ 5e^(-2x) dx", a: "-(5/2)e^(-2x) + C" },
+    ],
+  },
+  {
+    cat: "Exponentials & Logs",
+    front: "∫ a^(kx) dx (a>0, a≠1)",
+    back: "a^(kx) / (k ln a) + C",
+    examples: [
+      { q: "∫ 2^(3x) dx", a: "2^(3x)/(3 ln 2) + C" },
+      { q: "∫ 10^(-x) dx", a: "-10^(-x)/ln 10 + C" },
+    ],
+  },
+  {
+    cat: "Exponentials & Logs",
+    front: "∫ ln x dx (x>0)",
+    back: "x ln x - x + C",
+    examples: [
+      { q: "∫ ln(5x) dx", a: "x ln(5x) - x + C" },
+    ],
+    hint: "Integration by parts."
+  },
+
+  // ===================== BASIC TRIG INTEGRALS =====================
+  {
+    cat: "Trig",
+    front: "∫ sin(kx) dx",
+    back: "-(1/k) cos(kx) + C",
+    examples: [
+      { q: "∫ sin(3x) dx", a: "-(1/3)cos(3x) + C" },
+      { q: "∫ -4 sin(2x) dx", a: "2cos(2x) + C" },
+    ],
+  },
+  {
+    cat: "Trig",
+    front: "∫ cos(kx) dx",
+    back: "(1/k) sin(kx) + C",
+    examples: [
+      { q: "∫ cos(5x) dx", a: "(1/5)sin(5x) + C" },
+      { q: "∫ 7cos(x/2) dx", a: "14 sin(x/2) + C" },
+    ],
+  },
+  {
+    cat: "Trig",
+    front: "∫ sec^2(kx) dx",
+    back: "(1/k) tan(kx) + C",
+    examples: [
+      { q: "∫ sec^2(4x) dx", a: "(1/4)tan(4x) + C" },
+    ],
+  },
+  {
+    cat: "Trig",
+    front: "∫ csc^2(kx) dx",
+    back: "-(1/k) cot(kx) + C",
+    examples: [
+      { q: "∫ csc^2(3x) dx", a: "-(1/3)cot(3x) + C" },
+    ],
+  },
+  {
+    cat: "Trig",
+    front: "∫ sec(kx)tan(kx) dx",
+    back: "(1/k) sec(kx) + C",
+    examples: [
+      { q: "∫ sec(2x)tan(2x) dx", a: "(1/2)sec(2x) + C" },
+    ],
+  },
+  {
+    cat: "Trig",
+    front: "∫ csc(kx)cot(kx) dx",
+    back: "-(1/k) csc(kx) + C",
+    examples: [
+      { q: "∫ csc(5x)cot(5x) dx", a: "-(1/5)csc(5x) + C" },
+    ],
+  },
+
+  // ===================== “MEMORIZE” TRIG INTEGRALS =====================
+  {
+    cat: "Trig",
+    front: "∫ tan x dx",
+    back: "-ln|cos x| + C  (also = ln|sec x| + C)",
+    examples: [
+      { q: "∫ tan(3x) dx", a: "-(1/3)ln|cos(3x)| + C" },
+    ],
+  },
+  {
+    cat: "Trig",
+    front: "∫ cot x dx",
+    back: "ln|sin x| + C",
+    examples: [
+      { q: "∫ cot(2x) dx", a: "(1/2)ln|sin(2x)| + C" },
+    ],
+  },
+  {
+    cat: "Trig",
+    front: "∫ sec x dx",
+    back: "ln|sec x + tan x| + C",
+    examples: [
+      { q: "∫ sec(4x) dx", a: "(1/4) ln|sec(4x)+tan(4x)| + C" },
+    ],
+  },
+  {
+    cat: "Trig",
+    front: "∫ csc x dx",
+    back: "-ln|csc x + cot x| + C  (also = ln|csc x - cot x| + C)",
+    examples: [
+      { q: "∫ csc(3x) dx", a: "-(1/3) ln|csc(3x)+cot(3x)| + C" },
+    ],
+  },
+
+  // ===================== INVERSE TRIG FORMS (ANTIDERIVATIVES) =====================
+  {
+    cat: "Inverse Trig Forms",
+    front: "∫ 1/(a^2 + x^2) dx",
+    back: "(1/a) arctan(x/a) + C",
+    examples: [
+      { q: "∫ 1/(9 + x^2) dx", a: "(1/3) arctan(x/3) + C" },
+      { q: "∫ 5/(25 + x^2) dx", a: "arctan(x/5) + C" },
+    ],
+  },
+  {
+    cat: "Inverse Trig Forms",
+    front: "∫ 1/√(a^2 - x^2) dx",
+    back: "arcsin(x/a) + C",
+    examples: [
+      { q: "∫ 1/√(16 - x^2) dx", a: "arcsin(x/4) + C" },
+    ],
+  },
+  {
+    cat: "Inverse Trig Forms",
+    front: "∫ 1/√(x^2 - a^2) dx",
+    back: "ln|x + √(x^2 - a^2)| + C",
+    examples: [
+      { q: "∫ 1/√(x^2 - 25) dx", a: "ln|x + √(x^2-25)| + C" },
+    ],
+  },
+
+  // ===================== TRIG SUB FORMS =====================
+  {
+    cat: "Trig-Sub Forms",
+    front: "∫ √(a^2 - x^2) dx",
+    back: "(x/2)√(a^2-x^2) + (a^2/2)arcsin(x/a) + C",
+    examples: [
+      { q: "∫ √(9 - x^2) dx", a: "(x/2)√(9-x^2) + (9/2)arcsin(x/3) + C" },
+    ],
+  },
+  {
+    cat: "Trig-Sub Forms",
+    front: "∫ √(x^2 + a^2) dx",
+    back: "(x/2)√(x^2+a^2) + (a^2/2)ln|x + √(x^2+a^2)| + C",
+    examples: [
+      { q: "∫ √(x^2 + 4) dx", a: "(x/2)√(x^2+4) + 2 ln|x+√(x^2+4)| + C" },
+    ],
+  },
+  {
+    cat: "Trig-Sub Forms",
+    front: "∫ √(x^2 - a^2) dx",
+    back: "(x/2)√(x^2-a^2) - (a^2/2)ln|x + √(x^2-a^2)| + C",
+    examples: [
+      { q: "∫ √(x^2 - 16) dx", a: "(x/2)√(x^2-16) - 8 ln|x+√(x^2-16)| + C" },
+    ],
+  },
+
+  // ===================== TECHNIQUES: SUBSTITUTION =====================
+  {
+    cat: "Techniques",
+    front: "u-Substitution (pattern)",
+    back: "If ∫ f(g(x))g'(x) dx, let u=g(x), du=g'(x)dx → ∫ f(u) du",
+    examples: [
+      { q: "∫ 2x·cos(x^2) dx", a: "u=x^2 → ∫ cos u du = sin u + C = sin(x^2)+C" },
+      { q: "∫ (3)/(1+ (3x+1)^2) dx", a: "u=3x+1 → ∫ 1/(1+u^2) du = arctan u + C" },
+    ],
+    hint: "Look for inside function + its derivative."
+  },
+
+  // ===================== TECHNIQUES: INTEGRATION BY PARTS =====================
+  {
+    cat: "Techniques",
+    front: "Integration by Parts (IBP)",
+    back: "∫ u dv = u v − ∫ v du",
+    examples: [
+      { q: "Typical choice rule (LIATE)", a: "Log, Inverse trig, Algebraic, Trig, Exponential" },
+      { q: "∫ x e^x dx", a: "u=x, dv=e^x dx → x e^x − ∫ e^x dx = x e^x − e^x + C" },
+      { q: "∫ x sin(3x) dx", a: "u=x, dv=sin(3x)dx → v=-(1/3)cos(3x) → -(x/3)cos(3x) + (1/3)∫ cos(3x)dx = -(x/3)cos(3x) + (1/9)sin(3x) + C" },
+    ],
+  },
+
+  // ===================== TECHNIQUES: TRIG INTEGRALS RULES OF THUMB =====================
+  {
+    cat: "Techniques",
+    front: "Trig integrals: sin^m x cos^n x",
+    back: "If m odd: save sin x, convert rest using sin^2=1−cos^2; If n odd: save cos x, convert using cos^2=1−sin^2; If both even: use half-angle identities",
+    examples: [
+      { q: "∫ sin^3 x cos^2 x dx", a: "Save sin x; sin^2=1−cos^2; u=cos x" },
+      { q: "∫ sin^2 x cos^2 x dx", a: "Use half-angle: sin^2=(1−cos2x)/2, cos^2=(1+cos2x)/2" },
+    ],
+  },
+  {
+    cat: "Techniques",
+    front: "Trig integrals: sec^m x tan^n x",
+    back: "If n odd: save sec x tan x, u=sec x; If m even: save sec^2 x, u=tan x; Otherwise use identities tan^2=sec^2−1",
+    examples: [
+      { q: "∫ sec^4 x tan x dx", a: "n odd → save sec x tan x; convert rest with tan^2=sec^2−1; u=sec x" },
+      { q: "∫ sec^2 x tan^4 x dx", a: "m even → save sec^2 x; u=tan x" },
+    ],
+  },
+
+  // ===================== TECHNIQUES: TRIG SUBSTITUTION MAP =====================
+  {
+    cat: "Techniques",
+    front: "Trig substitution map",
+    back: "√(a^2−x^2): x=a sinθ;  √(a^2+x^2): x=a tanθ;  √(x^2−a^2): x=a secθ",
+    examples: [
+      { q: "If √(16−x^2)", a: "Use x=4 sinθ" },
+      { q: "If √(x^2+9)", a: "Use x=3 tanθ" },
+      { q: "If √(x^2−25)", a: "Use x=5 secθ" },
+    ],
+  },
+
+  // ===================== TECHNIQUES: PARTIAL FRACTIONS =====================
+  {
+    cat: "Techniques",
+    front: "Partial fractions (workflow)",
+    back: "1) If improper: long divide. 2) Factor denominator. 3) Decompose by factor type. 4) Solve constants. 5) Integrate terms (logs/arctan).",
+    examples: [
+      { q: "Distinct linear: A/(x-a)+B/(x-b)", a: "→ logs" },
+      { q: "Repeated linear: A/(x-a)+B/(x-a)^2+…", a: "→ logs + powers" },
+      { q: "Irreducible quadratic: (Ax+B)/(x^2+px+q)", a: "→ (A/2)ln + arctan form (complete square)" },
+    ],
+    hint: "No need to memorize constants—memorize the forms."
+  },
+
+  // ===================== IMPROPER INTEGRALS =====================
+  {
+    cat: "Improper Integrals",
+    front: "Improper integral Type I (infinite limit)",
+    back: "∫_a^∞ f(x) dx = lim_{b→∞} ∫_a^b f(x) dx (and similarly for −∞)",
+    examples: [
+      { q: "∫_1^∞ 1/x^p dx", a: "Converges if p>1; diverges if p≤1" },
+      { q: "∫_0^∞ e^(−kx) dx (k>0)", a: "Converges = 1/k" },
+    ],
+    hint: "Rewrite as a limit, then evaluate."
+  },
+  {
+    cat: "Improper Integrals",
+    front: "Improper integral Type II (discontinuity)",
+    back: "If f has infinite discontinuity at c: ∫_a^b f = lim_{t→c^-}∫_a^t f + lim_{t→c^+}∫_t^b f (both must converge)",
+    examples: [
+      { q: "∫_0^1 1/√x dx", a: "Rewrite lim_{t→0^+} ∫_t^1 x^(−1/2) dx (converges)" },
+      { q: "∫_0^1 1/x dx", a: "lim_{t→0^+} ∫_t^1 (1/x) dx diverges" },
+    ],
+  },
+
+  // ===================== NUMERICAL INTEGRATION: SIMPSON =====================
+  {
+    cat: "Numerical Integration",
+    front: "Simpson’s Rule (n even)",
+    back: "∫_a^b f(x) dx ≈ (Δx/3)[ f(x0)+4f(x1)+2f(x2)+4f(x3)+…+2f(x_{n−2})+4f(x_{n−1})+f(xn) ], Δx=(b−a)/n",
+    examples: [
+      { q: "Weights pattern", a: "1,4,2,4,2,…,4,1 (n even)" },
+      { q: "If n=2", a: "(Δx/3)[f(x0)+4f(x1)+f(x2)]" },
+    ],
+    hint: "n must be even."
+  },
+  {
+    cat: "Numerical Integration",
+    front: "Simpson’s Error Bound",
+    back: "|E_S| ≤ ((b−a)/180)·Δx^4·max_{[a,b]} |f''''(x)| , where Δx=(b−a)/n and n even",
+    examples: [
+      { q: "Given M = max|f''''|", a: "Error ≤ (b−a)MΔx^4/180" },
+    ],
+    hint: "You need 4th derivative."
+  },
+
+  // ===================== APPLICATIONS =====================
+  {
+    cat: "Applications",
+    front: "Average value of f on [a,b]",
+    back: "f_avg = (1/(b−a)) ∫_a^b f(x) dx",
+    examples: [
+      { q: "Average value of x^2 on [0,3]", a: "(1/3)∫_0^3 x^2 dx = (1/3)[x^3/3]_0^3 = (1/3)(9)=3" },
+    ],
+  },
+  {
+    cat: "Applications",
+    front: "Area under a curve (above x-axis)",
+    back: "A = ∫_a^b f(x) dx (if f(x) ≥ 0)",
+    examples: [
+      { q: "If f crosses axis", a: "Use geometric pieces or integrate |f(x)| for total area." },
+    ],
+  },
+  {
+    cat: "Applications",
+    front: "Area between curves (w.r.t. x)",
+    back: "A = ∫_a^b [top(x) − bottom(x)] dx, where a,b are intersection x-values",
+    examples: [
+      { q: "Between y=f and y=g", a: "Find intersections f=g → bounds; then integrate (f−g) or (g−f) depending on which is top." },
+    ],
+    hint: "Sketch or test a point to see which is on top."
+  },
+  {
+    cat: "Applications",
+    front: "Area between curves (w.r.t. y)",
+    back: "A = ∫_{c}^{d} [right(y) − left(y)] dy",
+    examples: [
+      { q: "When to use dy", a: "When solving for x in terms of y is easier; or region is sideways." },
+    ],
+  },
+  {
+    cat: "Applications",
+    front: "Volume by disks/washers (around x-axis)",
+    back: "V = π ∫_a^b [R(x)]^2 dx (disk);  V = π ∫_a^b (R(x)^2 − r(x)^2) dx (washer)",
+    examples: [
+      { q: "Rotate y=f(x) about x-axis", a: "R(x)=f(x)" },
+      { q: "Rotate region between y=top and y=bottom", a: "R=top, r=bottom" },
+    ],
+  },
+  {
+    cat: "Applications",
+    front: "Volume by shells (around y-axis, w.r.t. x)",
+    back: "V = 2π ∫_a^b (radius)(height) dx = 2π ∫_a^b x·(top−bottom) dx",
+    examples: [
+      { q: "Rotate about y-axis", a: "radius = x, height = vertical length" },
+    ],
+    hint: "Shells often avoid solving for x(y)."
+  },
+  {
+    cat: "Applications",
+    front: "Volume: rotate about y-axis (washers, w.r.t. y)",
+    back: "V = π ∫_c^d (R(y)^2 − r(y)^2) dy",
+    examples: [
+      { q: "Rotate x=right(y), x=left(y) about y-axis", a: "R=right, r=left" },
+    ],
+  },
+  {
+    cat: "Applications",
+    front: "Arc length (y = f(x), a≤x≤b)",
+    back: "L = ∫_a^b √(1 + [f'(x)]^2) dx",
+    examples: [
+      { q: "If y is parametric", a: "Use L = ∫ √((dx/dt)^2 + (dy/dt)^2) dt" },
+    ],
+    hint: "Compute f'(x) first, then plug in."
+  },
+  {
+    cat: "Applications",
+    front: "Arc length (x = g(y), c≤y≤d)",
+    back: "L = ∫_c^d √(1 + [g'(y)]^2) dy",
+    examples: [
+      { q: "When it’s easier", a: "If x is naturally a function of y." },
+    ],
+  },
+
+  // ===================== (Optional) HYPERBOLIC =====================
+  {
+    cat: "Hyperbolic",
+    front: "∫ sinh(kx) dx",
+    back: "(1/k) cosh(kx) + C",
+    examples: [
+      { q: "∫ sinh(2x) dx", a: "(1/2)cosh(2x) + C" },
+    ],
+  },
+  {
+    cat: "Hyperbolic",
+    front: "∫ cosh(kx) dx",
+    back: "(1/k) sinh(kx) + C",
+    examples: [
+      { q: "∫ 5cosh(3x) dx", a: "(5/3)sinh(3x) + C" },
+    ],
+  },
+];
+
+const categories = ["All", ...Array.from(new Set(CARDS.map(c => c.cat)))];
+
+const els = {
+  category: document.getElementById("category"),
+  search: document.getElementById("search"),
+  cards: document.getElementById("cards"),
+  shuffleBtn: document.getElementById("shuffleBtn"),
+  showAllBtn: document.getElementById("showAllBtn"),
+  hideAllBtn: document.getElementById("hideAllBtn"),
+  countTag: document.getElementById("countTag"),
+};
+
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
+function render() {
+  const cat = els.category.value;
+  const q = els.search.value.trim().toLowerCase();
+
+  const filtered = CARDS.filter(card => {
+    const inCat = (cat === "All") || (card.cat === cat);
+    if (!inCat) return false;
+
+    if (!q) return true;
+
+    const blob = [
+      card.cat, card.front, card.back, card.hint || "",
+      ...(card.examples ? card.examples.flatMap(e => [e.q, e.a]) : [])
+    ].join(" ").toLowerCase();
+
+    return blob.includes(q);
+  });
+
+  els.countTag.textContent = `${filtered.length} cards showing`;
+
+  els.cards.innerHTML = filtered.map((card, idx) => {
+    const exHtml = (card.examples && card.examples.length)
+      ? `<div class="example">
+           <div><strong>Examples:</strong></div>
+           ${card.examples.map(e => `<div style="margin-top:6px;">
+             <div><code>${escapeHtml(e.q)}</code></div>
+             <div><code>${escapeHtml(e.a)}</code></div>
+           </div>`).join("")}
+         </div>`
+      : "";
+
+    const hintHtml = card.hint
+      ? `<div class="hint"><strong>Hint:</strong> ${escapeHtml(card.hint)}</div>`
+      : "";
+
+    return `
+      <div class="card" data-card="${idx}">
+        <div class="row">
+          <span class="tag">${escapeHtml(card.cat)}</span>
+          <span class="tag">Click to flip</span>
+        </div>
+
+        <div class="front"><code>${escapeHtml(card.front)}</code></div>
+
+        <div class="back">
+          <div><strong>Answer:</strong></div>
+          <div style="margin-top:6px;"><code>${escapeHtml(card.back)}</code></div>
+          ${hintHtml}
+          ${exHtml}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  document.querySelectorAll(".card").forEach(cardEl => {
+    cardEl.addEventListener("click", () => {
+      const back = cardEl.querySelector(".back");
+      back.style.display = (back.style.display === "block") ? "none" : "block";
+    });
+  });
+}
+
+function shuffleCards() {
+  for (let i = CARDS.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [CARDS[i], CARDS[j]] = [CARDS[j], CARDS[i]];
+  }
+  render();
+}
+
+function setAllAnswers(show) {
+  document.querySelectorAll(".card .back").forEach(back => {
+    back.style.display = show ? "block" : "none";
+  });
+}
+
+// init
+categories.forEach(c => {
+  const opt = document.createElement("option");
+  opt.value = c;
+  opt.textContent = c;
+  els.category.appendChild(opt);
+});
+
+els.category.addEventListener("change", render);
+els.search.addEventListener("input", render);
+els.shuffleBtn.addEventListener("click", shuffleCards);
+els.showAllBtn.addEventListener("click", () => setAllAnswers(true));
+els.hideAllBtn.addEventListener("click", () => setAllAnswers(false));
+
+render();
+</script>
+</body>
+</html>
